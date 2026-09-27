@@ -114,6 +114,12 @@
     border-radius:4px;
     flex-shrink:0;
   }
+  .section-helper{
+    font-size:13px;
+    color:var(--text-muted);
+    margin:-8px 2px 18px;
+    line-height:1.45;
+  }
 
   /* Fields */
   .field{ margin-bottom:16px; }
@@ -135,6 +141,14 @@
     margin-top:5px;
     line-height:1.45;
   }
+  .field-error{
+    display:none;
+    color:var(--danger);
+    font-size:13px;
+    margin-top:6px;
+    line-height:1.45;
+  }
+  .field-error.visible{ display:block; }
 
   input[type="text"],
   input[type="email"],
@@ -155,34 +169,9 @@
     outline-offset:1px;
     border-color:var(--heading);
   }
-
-  input[type="file"]{
-    display:block;
-    width:100%;
-    font-family:var(--font-body);
-    font-size:14.5px;
-    color:var(--text);
-    background:var(--card);
-    border:1px dashed var(--border);
-    border-radius:6px;
-    padding:12px;
-  }
-  input[type="file"]:focus{
-    outline:2px solid var(--heading);
-    outline-offset:1px;
-    border-color:var(--heading);
-  }
-  input[type="file"]::file-selector-button{
-    font-family:var(--font-body);
-    font-size:13.5px;
-    font-weight:600;
-    color:var(--white);
-    background:var(--navy);
-    border:none;
-    border-radius:5px;
-    padding:8px 14px;
-    margin-right:12px;
-    cursor:pointer;
+  input:disabled{
+    opacity:0.55;
+    cursor:not-allowed;
   }
 
   .field-grid{
@@ -216,12 +205,37 @@
     cursor:pointer;
   }
 
+  /* Checkboxes */
+  input[type="checkbox"]{
+    accent-color:var(--heading);
+    width:17px;
+    height:17px;
+    cursor:pointer;
+    flex-shrink:0;
+    margin-top:2px;
+  }
+  .checkbox-row{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+  }
+  .checkbox-row label{
+    font-size:14px;
+    font-weight:400;
+    color:var(--text);
+    cursor:pointer;
+    line-height:1.45;
+  }
+  .checkbox-row a{
+    color:var(--heading);
+  }
+
   .conditional-field{
     display:none;
     margin-top:12px;
   }
 
-  /* Instructional blocks (Assets Needed section) */
+  /* Instructional blocks */
   .instruction-block{
     background:var(--surface);
     border-left:3px solid var(--heading);
@@ -241,6 +255,7 @@
     font-size:14px;
     color:var(--text);
   }
+  .instruction-block a{ color:var(--heading); }
 
   /* Submit */
   .submit-row{ margin-top:8px; }
@@ -306,11 +321,9 @@
 <main class="page">
 
   <form id="onboardingForm" action="https://formspree.io/f/mvkpewwv" method="POST" enctype="multipart/form-data">
-    <!-- NOTE: file uploads (Photos, below) count against your Formspree plan's attachment size/volume limits (see formspree.io/plans) -->
-
-    <input type="hidden" name="_subject" value="New Client Onboarding Submission">
+    <input type="hidden" name="_subject" id="subjectField" value="New Client Onboarding Submission">
     <!-- Honeypot spam trap, expected by Formspree -->
-    <input type="text" name="_gotcha" class="visually-hidden" tabindex="-1" autocomplete="off">
+    <input type="text" name="_gotcha" id="gotchaField" class="visually-hidden" tabindex="-1" autocomplete="off">
 
     <div class="intro">
       <input
@@ -320,275 +333,227 @@
         id="formTitle"
         value="Website Information"
         aria-label="Form heading">
-      <p class="intro-text">This helps us build your site with accurate information, and should take about 10–15 minutes.</p>
+      <p class="intro-text">This is the content for your new website and the info we need to set up your business texting. It takes about 10 minutes. If you're unsure about something, leave it blank and we'll talk it through.</p>
       <p class="required-note">Fields marked * are required.</p>
     </div>
 
-    <!-- 1. Business Basics -->
+    <!-- 1. Contact -->
     <section class="section" aria-labelledby="sec1-heading">
-      <h2 class="section-heading" id="sec1-heading"><span class="section-number">01</span>Business Basics</h2>
+      <h2 class="section-heading" id="sec1-heading"><span class="section-number">01</span>Contact</h2>
+
+      <div class="field">
+        <label class="field-label" for="fullName">Full name <span class="req">*</span></label>
+        <input type="text" id="fullName" name="Full Name" required>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="email">Email <span class="req">*</span></label>
+        <input type="email" id="email" name="Email" required>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="leadPhone">Phone for new lead alerts <span class="req">*</span></label>
+        <input type="tel" id="leadPhone" name="Phone for New Lead Alerts" required>
+        <p class="helper-text">Where you want to be notified when a new lead comes in. Your cell is fine.</p>
+      </div>
+    </section>
+
+    <!-- 2. Business Registration -->
+    <section class="section" aria-labelledby="sec2-heading">
+      <h2 class="section-heading" id="sec2-heading"><span class="section-number">02</span>Business Registration</h2>
+      <p class="section-helper">We use this to register your business texting number with the phone carriers so your texts to customers get delivered instead of blocked. It must match your IRS records exactly.</p>
+
+      <div class="field">
+        <label class="field-label" for="legalBusinessName">Legal business name <span class="req">*</span></label>
+        <input type="text" id="legalBusinessName" name="Legal Business Name" required>
+        <p class="helper-text">Exactly as it appears on your EIN letter from the IRS, including LLC, Inc., etc.</p>
+      </div>
+
+      <div class="field" role="group" aria-labelledby="businessTypeLabel">
+        <span class="field-label" id="businessTypeLabel">Business type <span class="req">*</span></span>
+        <div class="radio-row">
+          <label><input type="radio" name="Business Type" value="LLC" required> LLC</label>
+          <label><input type="radio" name="Business Type" value="Corporation" required> Corporation</label>
+          <label><input type="radio" name="Business Type" value="Sole proprietor" required> Sole proprietor</label>
+          <label><input type="radio" name="Business Type" value="Partnership" required> Partnership</label>
+          <label><input type="radio" name="Business Type" value="Other" required> Other</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="ein">EIN (Tax ID) <span class="req">*</span></label>
+        <input type="text" id="ein" name="EIN (Tax ID)" inputmode="numeric" maxlength="10" pattern="\d{2}-\d{7}" required>
+        <p class="helper-text">Your 9-digit federal Tax ID number.</p>
+        <div class="checkbox-row" style="margin-top:10px;">
+          <input type="checkbox" id="noEin">
+          <label for="noEin">I'm a sole proprietor and don't have an EIN.</label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="businessAddress">Business address <span class="req">*</span></label>
+        <input type="text" id="businessAddress" name="Business Address" required>
+        <p class="helper-text">The address registered with the IRS. No PO boxes.</p>
+      </div>
+    </section>
+
+    <!-- 3. Your Business -->
+    <section class="section" aria-labelledby="sec3-heading">
+      <h2 class="section-heading" id="sec3-heading"><span class="section-number">03</span>Your Business</h2>
+
+      <div class="field">
+        <label class="field-label" for="customerBusinessName">Business name customers know you by <span class="req">*</span></label>
+        <input type="text" id="customerBusinessName" name="Business Name (Customer-Facing)" required>
+        <p class="helper-text">What should appear on your website and Google. Can be the same as your legal name.</p>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="currentWebsite">Current website</label>
+        <input type="text" id="currentWebsite" name="Current Website" placeholder="https://">
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="aboutBusiness">About your business <span class="req">*</span></label>
+        <textarea id="aboutBusiness" name="About Your Business" rows="5" required></textarea>
+        <p class="helper-text">3–5 sentences about you and how you got started. Customers want to know who they're hiring, so write it like you'd say it to them.</p>
+      </div>
+    </section>
+
+    <!-- 4. Services -->
+    <section class="section" aria-labelledby="sec4-heading">
+      <h2 class="section-heading" id="sec4-heading"><span class="section-number">04</span>Services</h2>
+
+      <div class="field">
+        <label class="field-label" for="services">All services you offer, one per line <span class="req">*</span></label>
+        <textarea id="services" name="Services Offered" rows="6" required></textarea>
+        <p class="helper-text">List at least 4. Be specific: "roof replacement" and "storm damage repair" rather than "roofing."</p>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="priorityServices">Which 1–3 services do you most want more customers for?</label>
+        <textarea id="priorityServices" name="Priority Services" rows="2"></textarea>
+        <p class="helper-text">We'll feature these most on your site.</p>
+      </div>
+    </section>
+
+    <!-- 5. Service Area -->
+    <section class="section" aria-labelledby="sec5-heading">
+      <h2 class="section-heading" id="sec5-heading"><span class="section-number">05</span>Service Area</h2>
+
+      <div class="field">
+        <label class="field-label" for="mainCity">Main city</label>
+        <input type="text" id="mainCity" name="Main City">
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="otherCities">Other cities, suburbs, or counties you serve</label>
+        <textarea id="otherCities" name="Other Cities/Areas Served" rows="5"></textarea>
+        <p class="helper-text">Up to 14, one per line.</p>
+        <p class="field-error" id="otherCitiesError"></p>
+      </div>
+    </section>
+
+    <!-- 6. What Sets You Apart -->
+    <section class="section" aria-labelledby="sec6-heading">
+      <h2 class="section-heading" id="sec6-heading"><span class="section-number">06</span>What Sets You Apart</h2>
+
+      <div class="field">
+        <label class="field-label" for="differentiators">Things we should show off</label>
+        <textarea id="differentiators" name="Differentiators" rows="3"></textarea>
+        <p class="helper-text">Examples: 10+ years in business, veteran owned, fully insured, licensed, warranties, financing, family owned.</p>
+      </div>
+    </section>
+
+    <!-- 7. Hours -->
+    <section class="section" aria-labelledby="sec7-heading">
+      <h2 class="section-heading" id="sec7-heading"><span class="section-number">07</span>Hours</h2>
+
+      <div class="field">
+        <label class="field-label" for="hours">Business hours <span class="req">*</span></label>
+        <input type="text" id="hours" name="Business Hours" placeholder="Mon–Fri, 8am–5pm" required>
+      </div>
+    </section>
+
+    <!-- 8. Online Profiles -->
+    <section class="section" aria-labelledby="sec8-heading">
+      <h2 class="section-heading" id="sec8-heading"><span class="section-number">08</span>Online Profiles</h2>
+      <p class="section-helper">Copy and paste the link from your browser.</p>
 
       <div class="field-grid">
         <div class="field">
-          <label class="field-label" for="businessName">Business/legal name <span class="req">*</span></label>
-          <input type="text" id="businessName" name="Business/Legal Name" required>
+          <label class="field-label" for="gbp">Google Business Profile</label>
+          <input type="text" id="gbp" name="Google Business Profile" placeholder="https://g.page/yourbusiness">
         </div>
         <div class="field">
-          <label class="field-label" for="contactName">Owner/main contact name <span class="req">*</span></label>
-          <input type="text" id="contactName" name="Owner/Main Contact Name" required>
+          <label class="field-label" for="facebook">Facebook</label>
+          <input type="text" id="facebook" name="Facebook" placeholder="https://facebook.com/yourbusiness">
         </div>
         <div class="field">
-          <label class="field-label" for="phone">Phone <span class="req">*</span></label>
-          <input type="tel" id="phone" name="Phone" required>
+          <label class="field-label" for="instagram">Instagram</label>
+          <input type="text" id="instagram" name="Instagram" placeholder="https://instagram.com/yourbusiness">
         </div>
         <div class="field">
-          <label class="field-label" for="email">Email <span class="req">*</span></label>
-          <input type="email" id="email" name="Email" required>
+          <label class="field-label" for="yelp">Yelp</label>
+          <input type="text" id="yelp" name="Yelp" placeholder="https://yelp.com/biz/yourbusiness">
+        </div>
+        <div class="field">
+          <label class="field-label" for="bbb">BBB</label>
+          <input type="text" id="bbb" name="BBB" placeholder="https://bbb.org/yourbusiness">
+        </div>
+        <div class="field">
+          <label class="field-label" for="tiktok">TikTok</label>
+          <input type="text" id="tiktok" name="TikTok" placeholder="https://tiktok.com/@yourbusiness">
         </div>
       </div>
-
-      <div class="field">
-        <label class="field-label" for="address">Physical business address</label>
-        <input type="text" id="address" name="Physical Business Address">
-      </div>
     </section>
 
-    <!-- 2. About Your Business -->
-    <section class="section" aria-labelledby="sec2-heading">
-      <h2 class="section-heading" id="sec2-heading"><span class="section-number">02</span>About Your Business</h2>
+    <!-- 9. Logo & Photos -->
+    <section class="section" aria-labelledby="sec9-heading">
+      <h2 class="section-heading" id="sec9-heading"><span class="section-number">09</span>Logo &amp; Photos</h2>
 
-      <div class="field">
-        <label class="field-label" for="aboutBusiness">Tell us about your business</label>
-        <textarea id="aboutBusiness" name="About the Business" rows="5" placeholder="Your story, mission, what makes you different: anything that helps us capture your voice."></textarea>
-      </div>
-    </section>
-
-    <!-- 3. Customers & Positioning -->
-    <section class="section" aria-labelledby="sec3-heading">
-      <h2 class="section-heading" id="sec3-heading"><span class="section-number">03</span>Customers &amp; Positioning</h2>
-
-      <div class="field">
-        <label class="field-label" for="idealCustomer">Who is your ideal customer?</label>
-        <textarea id="idealCustomer" name="Ideal Customer" rows="2" placeholder="e.g. Homeowners, general contractors, property managers, commercial businesses, builders/developers…"></textarea>
-      </div>
-
-      <div class="field">
-        <label class="field-label" for="differentiator">What makes your business different from other contractors in your area?</label>
-        <textarea id="differentiator" name="Competitive Differentiator" rows="3"></textarea>
-        <p class="helper-text">Examples: experience, warranties, speed, workmanship, specialization, pricing, family ownership, service quality, certifications.</p>
-      </div>
-    </section>
-
-    <!-- 4. Services & Specialties -->
-    <section class="section" aria-labelledby="sec4-heading">
-      <h2 class="section-heading" id="sec4-heading"><span class="section-number">04</span>Services &amp; Specialties</h2>
-
-      <div class="field">
-        <label class="field-label" for="services">List every service you offer, one per line <span class="req">*</span></label>
-        <textarea id="services" name="Services Offered" rows="6" required></textarea>
-      </div>
-
-      <div class="field">
-        <label class="field-label" for="specialties">What types of projects do you specialize in?</label>
-        <textarea id="specialties" name="Project Specialties" rows="3" placeholder="e.g. Custom kitchen remodels, historic home restorations, new construction"></textarea>
-        <p class="helper-text">The kinds of jobs you're best known for, not a repeat of the list above.</p>
-      </div>
-
-      <div class="field">
-        <label class="field-label" for="priorityServices">Which 1–3 services would you most like to get more customers for?</label>
-        <input type="text" id="priorityServices" name="Priority Services" placeholder="e.g. Roof replacements, emergency repairs">
-        <p class="helper-text">We'll prioritize these in your site's messaging and SEO.</p>
-      </div>
-    </section>
-
-    <!-- 5. Hours & Service Area -->
-    <section class="section" aria-labelledby="sec5-heading">
-      <h2 class="section-heading" id="sec5-heading"><span class="section-number">05</span>Hours &amp; Service Area</h2>
-
-      <div class="field">
-        <label class="field-label" for="hours">Business hours</label>
-        <input type="text" id="hours" name="Business Hours" placeholder="e.g. Mon–Sat 9–5">
-      </div>
-
-      <div class="field">
-        <label class="field-label" for="serviceArea">Service area / cities served</label>
-        <textarea id="serviceArea" name="Service Area / Cities Served" rows="3"></textarea>
-      </div>
-    </section>
-
-    <!-- 6. Trust & Credibility -->
-    <section class="section" aria-labelledby="sec6-heading">
-      <h2 class="section-heading" id="sec6-heading"><span class="section-number">06</span>Trust &amp; Credibility</h2>
-
-      <div class="field" role="group" aria-labelledby="licensedLabel">
-        <span class="field-label" id="licensedLabel">Licensed &amp; insured?</span>
+      <div class="field" role="group" aria-labelledby="haveLogoLabel">
+        <span class="field-label" id="haveLogoLabel">Do you have a logo? <span class="req">*</span></span>
         <div class="radio-row">
-          <label><input type="radio" name="Licensed & Insured" value="Yes" class="licensed-radio"> Yes</label>
-          <label><input type="radio" name="Licensed & Insured" value="No" class="licensed-radio"> No</label>
+          <label><input type="radio" name="Have a Logo" value="Yes" class="logo-radio" required> Yes</label>
+          <label><input type="radio" name="Have a Logo" value="No, I need one made" class="logo-radio" required> No, I need one made</label>
         </div>
-        <div class="conditional-field" id="licenseNumberField">
-          <label class="field-label" for="licenseNumber">License/insurance number</label>
-          <input type="text" id="licenseNumber" name="License/Insurance Number">
-        </div>
-      </div>
-
-      <div class="field" role="group" aria-labelledby="warrantyLabel">
-        <span class="field-label" id="warrantyLabel">Do you offer any warranties, guarantees, or workmanship guarantees?</span>
-        <div class="radio-row">
-          <label><input type="radio" name="Warranties/Guarantees" value="Yes" class="warranty-radio"> Yes</label>
-          <label><input type="radio" name="Warranties/Guarantees" value="No" class="warranty-radio"> No</label>
-        </div>
-        <div class="conditional-field" id="warrantyDetailField">
-          <label class="field-label" for="warrantyDetail">Warranty/guarantee details</label>
-          <input type="text" id="warrantyDetail" name="Warranty/Guarantee Details">
+        <div class="conditional-field" id="logoNoteField">
+          <div class="instruction-block">
+            <p class="instruction-title">Logo file</p>
+            <p>Email your logo to <a href="mailto:bradley@getarclo.com">bradley@getarclo.com</a>.</p>
+          </div>
         </div>
       </div>
-
-      <div class="field" role="group" aria-labelledby="financingLabel">
-        <span class="field-label" id="financingLabel">Do you offer financing or payment plans?</span>
-        <div class="radio-row">
-          <label><input type="radio" name="Financing" value="Yes" class="financing-radio"> Yes</label>
-          <label><input type="radio" name="Financing" value="No" class="financing-radio"> No</label>
-        </div>
-        <div class="conditional-field" id="financingDetailField">
-          <label class="field-label" for="financingDetail">Financing details</label>
-          <input type="text" id="financingDetail" name="Financing Details">
-        </div>
-      </div>
-
-      <div class="field">
-        <label class="field-label" for="yearsInBusiness">Years in business (or founding year)</label>
-        <input type="text" id="yearsInBusiness" name="Years in Business / Founding Year">
-      </div>
-
-      <div class="field">
-        <label class="field-label" for="testimonials">Do you have customer testimonials or reviews you'd like featured on the website?</label>
-        <textarea id="testimonials" name="Testimonials/Reviews" rows="3" placeholder="Paste a testimonial directly, or share a link to where we can find it"></textarea>
-      </div>
-
-      <div class="field">
-        <label class="field-label" for="certifications">Any certifications, awards, or press mentions?</label>
-        <textarea id="certifications" name="Certifications, Awards, or Press" rows="3"></textarea>
-        <p class="helper-text">Leave blank if none. We won't fabricate this.</p>
-      </div>
-    </section>
-
-    <!-- 7. Website Goals -->
-    <section class="section" aria-labelledby="sec7-heading">
-      <h2 class="section-heading" id="sec7-heading"><span class="section-number">07</span>Website Goals</h2>
-
-      <div class="field" role="group" aria-labelledby="goalLabel">
-        <span class="field-label" id="goalLabel">What is the main action you want visitors to take? <span class="req">*</span></span>
-        <div class="radio-row">
-          <label><input type="radio" name="Main Website Goal" value="Call us" class="goal-radio" required> Call us</label>
-          <label><input type="radio" name="Main Website Goal" value="Request a quote" class="goal-radio" required> Request a quote</label>
-          <label><input type="radio" name="Main Website Goal" value="Schedule an estimate/consultation" class="goal-radio" required> Schedule an estimate/consultation</label>
-          <label><input type="radio" name="Main Website Goal" value="Submit a contact form" class="goal-radio" required> Submit a contact form</label>
-          <label><input type="radio" name="Main Website Goal" value="Visit our location" class="goal-radio" required> Visit our location</label>
-          <label><input type="radio" name="Main Website Goal" value="Other" class="goal-radio" required> Other</label>
-        </div>
-        <div class="conditional-field" id="goalOtherField">
-          <label class="field-label" for="goalOther">Please describe</label>
-          <input type="text" id="goalOther" name="Main Website Goal (Other)">
-        </div>
-      </div>
-    </section>
-
-    <!-- 8. Assets -->
-    <section class="section" aria-labelledby="sec8-heading">
-      <h2 class="section-heading" id="sec8-heading"><span class="section-number">08</span>Assets</h2>
 
       <div class="instruction-block">
-        <p class="instruction-title">Logo file</p>
-        <p>Please email or text your logo file directly rather than uploading here.</p>
-      </div>
-
-      <div class="field">
-        <label class="field-label" for="photos">Photos</label>
-        <p class="helper-text">Upload any current photos of your work, team, or location. Send as many as you have. Real photos convert better than stock images.</p>
-        <input type="file" id="photos" name="Photos" accept="image/*" multiple>
-        <p class="helper-text">To select several at once: hold Cmd (Mac) or Ctrl (Windows) while choosing files, or select a whole folder if your device allows it.</p>
+        <p class="instruction-title">Photos</p>
+        <p>Email 25–60 of your best job photos to <a href="mailto:bradley@getarclo.com" id="photosMailLink">bradley@getarclo.com</a>. Include at least one of you or your team, because customers want to see who they'll be working with. Real photos convert far better than stock.</p>
       </div>
     </section>
 
-    <!-- 9. Website & Domain -->
-    <section class="section" aria-labelledby="sec9-heading">
-      <h2 class="section-heading" id="sec9-heading"><span class="section-number">09</span>Website &amp; Domain</h2>
-
-      <div class="field">
-        <label class="field-label" for="currentWebsite">Current website URL (if applicable)</label>
-        <input type="text" id="currentWebsite" name="Current Website URL" placeholder="e.g. yourbusiness.com">
-      </div>
-
-      <div class="field">
-        <span class="field-label">Social media &amp; business profile links</span>
-        <div class="field-grid">
-          <div class="field">
-            <label class="field-label" for="gbp">Google Business Profile</label>
-            <input type="text" id="gbp" name="Google Business Profile">
-          </div>
-          <div class="field">
-            <label class="field-label" for="facebook">Facebook</label>
-            <input type="text" id="facebook" name="Facebook">
-          </div>
-          <div class="field">
-            <label class="field-label" for="instagram">Instagram</label>
-            <input type="text" id="instagram" name="Instagram">
-          </div>
-          <div class="field">
-            <label class="field-label" for="linkedin">LinkedIn</label>
-            <input type="text" id="linkedin" name="LinkedIn">
-          </div>
-        </div>
-        <div class="field">
-          <label class="field-label" for="otherProfiles">Other (Yelp, Houzz, Angi, BBB, etc.)</label>
-          <input type="text" id="otherProfiles" name="Other Profile Links">
-        </div>
-      </div>
-
-      <div class="field">
-        <label class="field-label" for="inspiration">Are there any websites you like?</label>
-        <textarea id="inspiration" name="Website Inspiration" rows="3" placeholder="Share a URL and briefly note what you like about it"></textarea>
-      </div>
-
-      <div class="field">
-        <label class="field-label" for="competitors">Are there any competitors you'd like us to look at?</label>
-        <textarea id="competitors" name="Competitors to Review" rows="2" placeholder="URLs or business names"></textarea>
-      </div>
+    <!-- 10. Domain -->
+    <section class="section" aria-labelledby="sec10-heading">
+      <h2 class="section-heading" id="sec10-heading"><span class="section-number">10</span>Domain</h2>
 
       <div class="field" role="group" aria-labelledby="ownDomainLabel">
-        <span class="field-label" id="ownDomainLabel">Do you already own a domain?</span>
+        <span class="field-label" id="ownDomainLabel">Do you already own a domain (like yourbusiness.com)?</span>
         <div class="radio-row">
           <label><input type="radio" name="Own a Domain" value="Yes" class="domain-radio"> Yes</label>
           <label><input type="radio" name="Own a Domain" value="No" class="domain-radio"> No</label>
+          <label><input type="radio" name="Own a Domain" value="Not sure" class="domain-radio"> Not sure</label>
         </div>
-        <div class="conditional-field" id="domainRegistrarField">
-          <label class="field-label" for="domainRegistrar">Who registered it / where (GoDaddy, Namecheap, etc.)</label>
-          <input type="text" id="domainRegistrar" name="Domain Registrar">
-        </div>
-        <div class="conditional-field" id="newDomainField">
-          <label class="field-label" for="desiredDomain">What domain would you like for your new website?</label>
-          <input type="text" id="desiredDomain" name="Desired New Domain" placeholder="e.g. mybusinessname.com">
-          <p class="helper-text">Just an idea is fine. We'll confirm it's available before purchasing.</p>
-        </div>
-      </div>
-
-      <div class="field" role="group" aria-labelledby="dnsLabel">
-        <span class="field-label" id="dnsLabel">Are you able to grant DNS access, or would you like us to handle the technical transfer?</span>
-        <div class="radio-row">
-          <label><input type="radio" name="DNS Access" value="I can grant DNS access"> I can grant DNS access</label>
-          <label><input type="radio" name="DNS Access" value="Please handle the technical transfer for us"> Please handle it for us</label>
+        <div class="conditional-field" id="domainNameField">
+          <label class="field-label" for="domainName">What is it?</label>
+          <input type="text" id="domainName" name="Domain Name">
         </div>
       </div>
     </section>
 
-    <!-- 10. Final Notes -->
-    <section class="section" aria-labelledby="sec10-heading">
-      <h2 class="section-heading" id="sec10-heading"><span class="section-number">10</span>Final Notes</h2>
-
-      <div class="field">
-        <label class="field-label" for="notes">Any other notes, must-haves, or things you want the site to say</label>
-        <textarea id="notes" name="Additional Notes" rows="4"></textarea>
+    <!-- Consent -->
+    <section class="section">
+      <div class="checkbox-row">
+        <input type="checkbox" id="consent" name="Consent" value="Yes" required>
+        <label for="consent">I agree to the <a href="https://getarclo.com/terms.html" target="_blank" rel="noopener">terms and conditions</a> and consent to receive text messages from Arclo about my project. Message &amp; data rates may apply. Reply STOP to opt out. <span class="req">*</span></label>
       </div>
     </section>
 
@@ -607,52 +572,150 @@
 
 <script>
   (function(){
-    // Conditional field: Licensed & insured -> license number
-    var licensedRadios = document.querySelectorAll('.licensed-radio');
-    var licenseField = document.getElementById('licenseNumberField');
-    licensedRadios.forEach(function(radio){
+    // Conditional field: Have a logo -> logo email note
+    var logoRadios = document.querySelectorAll('.logo-radio');
+    var logoNoteField = document.getElementById('logoNoteField');
+    logoRadios.forEach(function(radio){
       radio.addEventListener('change', function(){
-        licenseField.style.display = (this.value === 'Yes') ? 'block' : 'none';
+        logoNoteField.style.display = (this.value === 'Yes') ? 'block' : 'none';
       });
     });
 
-    // Conditional field: Own a domain -> registrar (Yes) or desired new domain (No)
+    // Conditional field: Own a domain -> what is it
     var domainRadios = document.querySelectorAll('.domain-radio');
-    var registrarField = document.getElementById('domainRegistrarField');
-    var newDomainField = document.getElementById('newDomainField');
+    var domainNameField = document.getElementById('domainNameField');
     domainRadios.forEach(function(radio){
       radio.addEventListener('change', function(){
-        registrarField.style.display = (this.value === 'Yes') ? 'block' : 'none';
-        newDomainField.style.display = (this.value === 'No') ? 'block' : 'none';
+        domainNameField.style.display = (this.value === 'Yes') ? 'block' : 'none';
       });
     });
 
-    // Conditional field: Warranties/guarantees -> details
-    var warrantyRadios = document.querySelectorAll('.warranty-radio');
-    var warrantyDetailField = document.getElementById('warrantyDetailField');
-    warrantyRadios.forEach(function(radio){
-      radio.addEventListener('change', function(){
-        warrantyDetailField.style.display = (this.value === 'Yes') ? 'block' : 'none';
-      });
+    // EIN auto-format as XX-XXXXXXX
+    var einInput = document.getElementById('ein');
+    einInput.addEventListener('input', function(){
+      var digits = this.value.replace(/\D/g, '').slice(0, 9);
+      this.value = digits.length > 2 ? (digits.slice(0, 2) + '-' + digits.slice(2)) : digits;
     });
 
-    // Conditional field: Financing -> details
-    var financingRadios = document.querySelectorAll('.financing-radio');
-    var financingDetailField = document.getElementById('financingDetailField');
-    financingRadios.forEach(function(radio){
-      radio.addEventListener('change', function(){
-        financingDetailField.style.display = (this.value === 'Yes') ? 'block' : 'none';
-      });
+    // Sole proprietor, no EIN
+    var noEinCheckbox = document.getElementById('noEin');
+    noEinCheckbox.addEventListener('change', function(){
+      if (this.checked) {
+        einInput.required = false;
+        einInput.disabled = true;
+        einInput.value = '';
+      } else {
+        einInput.required = true;
+        einInput.disabled = false;
+      }
     });
 
-    // Conditional field: Main website goal -> "Other" description
-    var goalRadios = document.querySelectorAll('.goal-radio');
-    var goalOtherField = document.getElementById('goalOtherField');
-    goalRadios.forEach(function(radio){
-      radio.addEventListener('change', function(){
-        goalOtherField.style.display = (this.value === 'Other') ? 'block' : 'none';
-      });
-    });
+    // Service area: max 14 non-empty lines
+    var otherCitiesInput = document.getElementById('otherCities');
+    var otherCitiesError = document.getElementById('otherCitiesError');
+    function countNonEmptyLines(value){
+      return value.split('\n').map(function(l){ return l.trim(); }).filter(function(l){ return l.length > 0; }).length;
+    }
+    function validateOtherCities(){
+      var count = countNonEmptyLines(otherCitiesInput.value);
+      if (count > 14) {
+        otherCitiesError.textContent = "That's " + count + " — please list 14 or fewer cities, suburbs, or counties, one per line.";
+        otherCitiesError.classList.add('visible');
+        return false;
+      }
+      otherCitiesError.classList.remove('visible');
+      return true;
+    }
+    otherCitiesInput.addEventListener('input', validateOtherCities);
+
+    // Prefill the photos email subject with the business name, kept in sync as it's typed
+    var photosMailLink = document.getElementById('photosMailLink');
+    var customerBusinessNameInput = document.getElementById('customerBusinessName');
+    function updatePhotosMailLink(){
+      var name = customerBusinessNameInput.value.trim();
+      var subject = name ? ('Photos – ' + name) : 'Photos';
+      photosMailLink.href = 'mailto:bradley@getarclo.com?subject=' + encodeURIComponent(subject);
+    }
+    customerBusinessNameInput.addEventListener('input', updatePhotosMailLink);
+    updatePhotosMailLink();
+
+    function normalizeUrl(value){
+      var v = value.trim();
+      if (!v) return '';
+      if (!/^https?:\/\//i.test(v)) v = 'https://' + v;
+      return v;
+    }
+
+    function getRadioValue(name){
+      var radios = document.getElementsByName(name);
+      for (var i = 0; i < radios.length; i++){
+        if (radios[i].checked) return radios[i].value;
+      }
+      return '';
+    }
+
+    var ownDomainYes = document.querySelector('.domain-radio[value="Yes"]');
+    var domainNameInput = document.getElementById('domainName');
+
+    // Builds the submission payload in a fixed field order (Business Registration
+    // first, for A2P review) regardless of the on-page visual section order.
+    function buildOrderedFormData(){
+      var fd = new FormData();
+
+      fd.append('Form Heading', document.getElementById('formTitle').value);
+      fd.append('_subject', document.getElementById('subjectField').value);
+      fd.append('_gotcha', document.getElementById('gotchaField').value);
+
+      // Business Registration
+      fd.append('Legal Business Name', document.getElementById('legalBusinessName').value);
+      fd.append('Business Type', getRadioValue('Business Type'));
+      fd.append('EIN (Tax ID)', noEinCheckbox.checked ? 'NO EIN — sole proprietor A2P' : einInput.value);
+      fd.append('Business Address', document.getElementById('businessAddress').value);
+
+      // Contact
+      fd.append('Full Name', document.getElementById('fullName').value);
+      fd.append('Email', document.getElementById('email').value);
+      fd.append('Phone for New Lead Alerts', document.getElementById('leadPhone').value);
+
+      // Your Business
+      fd.append('Business Name (Customer-Facing)', customerBusinessNameInput.value);
+      fd.append('Current Website', normalizeUrl(document.getElementById('currentWebsite').value));
+      fd.append('About Your Business', document.getElementById('aboutBusiness').value);
+
+      // Services
+      fd.append('Services Offered', document.getElementById('services').value);
+      fd.append('Priority Services', document.getElementById('priorityServices').value);
+
+      // Service Area
+      fd.append('Main City', document.getElementById('mainCity').value);
+      fd.append('Other Cities/Areas Served', otherCitiesInput.value);
+
+      // What Sets You Apart
+      fd.append('Differentiators', document.getElementById('differentiators').value);
+
+      // Hours
+      fd.append('Business Hours', document.getElementById('hours').value);
+
+      // Online Profiles
+      fd.append('Google Business Profile', normalizeUrl(document.getElementById('gbp').value));
+      fd.append('Facebook', normalizeUrl(document.getElementById('facebook').value));
+      fd.append('Instagram', normalizeUrl(document.getElementById('instagram').value));
+      fd.append('Yelp', normalizeUrl(document.getElementById('yelp').value));
+      fd.append('BBB', normalizeUrl(document.getElementById('bbb').value));
+      fd.append('TikTok', normalizeUrl(document.getElementById('tiktok').value));
+
+      // Logo & Photos
+      fd.append('Have a Logo', getRadioValue('Have a Logo'));
+
+      // Domain
+      fd.append('Own a Domain', getRadioValue('Own a Domain'));
+      fd.append('Domain Name', (ownDomainYes && ownDomainYes.checked) ? domainNameInput.value : '');
+
+      // Consent
+      fd.append('Consent (Terms & SMS)', document.getElementById('consent').checked ? 'Yes' : 'No');
+
+      return fd;
+    }
 
     // AJAX submit to Formspree with inline confirmation state
     var form = document.getElementById('onboardingForm');
@@ -663,12 +726,23 @@
     form.addEventListener('submit', function(e){
       e.preventDefault();
       errorText.style.display = 'none';
+
+      if (!form.reportValidity()) {
+        return;
+      }
+
+      if (!validateOtherCities()) {
+        otherCitiesInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        otherCitiesInput.focus();
+        return;
+      }
+
       submitBtn.disabled = true;
       submitBtn.textContent = 'Sending…';
 
       fetch(form.action, {
         method: 'POST',
-        body: new FormData(form),
+        body: buildOrderedFormData(),
         headers: { 'Accept': 'application/json' }
       }).then(function(response){
         if (response.ok) {
