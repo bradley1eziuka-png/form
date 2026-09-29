@@ -1,6 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!--
+  TEMPORARY VARIANT — Monroe Cross Country Club (MCCC)
+  Created 2026-09-29, for Todd to fill out. Revert to the standard Arclo
+  onboarding form with:
+    git checkout e9cfb3d -- index.html
+  (e9cfb3d = "Replace onboarding form questions with business texting/A2P
+  question set", the commit immediately before this MCCC variant.)
+
+  Changes made for this variant, relative to that commit:
+    - Section 02 "Business Registration" (legal name, business type, EIN,
+      business address) removed entirely — MCCC doesn't need A2P/carrier
+      texting registration. Numbering intentionally skips 02 below so each
+      remaining section keeps the number the user referenced it by.
+    - Section 03 "Your Business" -> "Your Program": business name field
+      became "Program name" (id="programName", pre-filled "Monroe Cross
+      Country Club"); "About your business" -> "About the program" with
+      new parent-facing helper copy.
+    - Section 04 "Services" -> "Program Structure": replaced with age
+      groups/levels served, season structure & schedule, program cost,
+      and an optional "things to highlight" field.
+    - Section 05 "Service Area" -> "Growth & Results": replaced with
+      enrollment by year, schools/regions represented, and performance/
+      improvement stats. The old 14-line service-area validator and its
+      JS were removed.
+    - Section 06 "What Sets You Apart" -> "Coach Bio & Credentials":
+      coaching background (required) + speaking engagements/credentials
+      (optional).
+    - Section 07 "Testimonials & Guest Speakers" — new section, replacing
+      the old "Hours" slot.
+    - Section 08 "Community Partners" — new section, replacing the old
+      "Online Profiles" slot number.
+    - Section 09 "Registration & Payment" — new section (Stripe/PayPal,
+      waiver platform), replacing the old "Logo & Photos" slot number.
+    - Section 10 "Online Profiles" — unchanged, renumbered to 10 (fields
+      were already optional, so no field-level change was needed).
+    - Section 11 "Logo & Photos" -> "Logo, Photos & Video": logo question
+      is no longer required; photo instructions updated to ask for photos
+      and video together.
+    - Section 12 "Domain" — unchanged, renumbered to 12.
+    - Consent checkbox copy replaced: dropped the SMS/"Reply STOP"
+      language, now just terms agreement + accuracy confirmation.
+    - JS: removed EIN auto-formatting, the sole-proprietor EIN-exemption
+      logic, and the 14-line service-area validator. buildOrderedFormData()
+      was rewritten for this field set — with no Business Registration
+      section to prioritize, it now just follows on-page order. The
+      "photos email subject" prefill now binds to the Program name field
+      instead of the business name field.
+-->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Website Information</title>
@@ -358,53 +406,13 @@
       </div>
     </section>
 
-    <!-- 2. Business Registration -->
-    <section class="section" aria-labelledby="sec2-heading">
-      <h2 class="section-heading" id="sec2-heading"><span class="section-number">02</span>Business Registration</h2>
-      <p class="section-helper">We use this to register your business texting number with the phone carriers so your texts to customers get delivered instead of blocked. It must match your IRS records exactly.</p>
-
-      <div class="field">
-        <label class="field-label" for="legalBusinessName">Legal business name <span class="req">*</span></label>
-        <input type="text" id="legalBusinessName" name="Legal Business Name" required>
-        <p class="helper-text">Exactly as it appears on your EIN letter from the IRS, including LLC, Inc., etc.</p>
-      </div>
-
-      <div class="field" role="group" aria-labelledby="businessTypeLabel">
-        <span class="field-label" id="businessTypeLabel">Business type <span class="req">*</span></span>
-        <div class="radio-row">
-          <label><input type="radio" name="Business Type" value="LLC" required> LLC</label>
-          <label><input type="radio" name="Business Type" value="Corporation" required> Corporation</label>
-          <label><input type="radio" name="Business Type" value="Sole proprietor" required> Sole proprietor</label>
-          <label><input type="radio" name="Business Type" value="Partnership" required> Partnership</label>
-          <label><input type="radio" name="Business Type" value="Other" required> Other</label>
-        </div>
-      </div>
-
-      <div class="field">
-        <label class="field-label" for="ein">EIN (Tax ID) <span class="req">*</span></label>
-        <input type="text" id="ein" name="EIN (Tax ID)" inputmode="numeric" maxlength="10" pattern="\d{2}-\d{7}" required>
-        <p class="helper-text">Your 9-digit federal Tax ID number.</p>
-        <div class="checkbox-row" style="margin-top:10px;">
-          <input type="checkbox" id="noEin">
-          <label for="noEin">I'm a sole proprietor and don't have an EIN.</label>
-        </div>
-      </div>
-
-      <div class="field">
-        <label class="field-label" for="businessAddress">Business address <span class="req">*</span></label>
-        <input type="text" id="businessAddress" name="Business Address" required>
-        <p class="helper-text">The address registered with the IRS. No PO boxes.</p>
-      </div>
-    </section>
-
-    <!-- 3. Your Business -->
+    <!-- 3. Your Program -->
     <section class="section" aria-labelledby="sec3-heading">
-      <h2 class="section-heading" id="sec3-heading"><span class="section-number">03</span>Your Business</h2>
+      <h2 class="section-heading" id="sec3-heading"><span class="section-number">03</span>Your Program</h2>
 
       <div class="field">
-        <label class="field-label" for="customerBusinessName">Business name customers know you by <span class="req">*</span></label>
-        <input type="text" id="customerBusinessName" name="Business Name (Customer-Facing)" required>
-        <p class="helper-text">What should appear on your website and Google. Can be the same as your legal name.</p>
+        <label class="field-label" for="programName">Program name</label>
+        <input type="text" id="programName" name="Program Name" value="Monroe Cross Country Club">
       </div>
 
       <div class="field">
@@ -413,70 +421,130 @@
       </div>
 
       <div class="field">
-        <label class="field-label" for="aboutBusiness">About your business <span class="req">*</span></label>
-        <textarea id="aboutBusiness" name="About Your Business" rows="5" required></textarea>
-        <p class="helper-text">3–5 sentences about you and how you got started. Customers want to know who they're hiring, so write it like you'd say it to them.</p>
+        <label class="field-label" for="aboutProgram">About the program <span class="req">*</span></label>
+        <textarea id="aboutProgram" name="About the Program" rows="5" required></textarea>
+        <p class="helper-text">Tell us about MCCC in your own words — the philosophy, what makes it different from a typical summer camp, and what you want parents to understand before they sign their kid up. (3–5 sentences, written like you'd say it to a parent.)</p>
       </div>
     </section>
 
-    <!-- 4. Services -->
+    <!-- 4. Program Structure -->
     <section class="section" aria-labelledby="sec4-heading">
-      <h2 class="section-heading" id="sec4-heading"><span class="section-number">04</span>Services</h2>
+      <h2 class="section-heading" id="sec4-heading"><span class="section-number">04</span>Program Structure</h2>
 
       <div class="field">
-        <label class="field-label" for="services">All services you offer, one per line <span class="req">*</span></label>
-        <textarea id="services" name="Services Offered" rows="6" required></textarea>
-        <p class="helper-text">List at least 4. Be specific: "roof replacement" and "storm damage repair" rather than "roofing."</p>
+        <label class="field-label" for="ageGroups">Age groups / experience levels served <span class="req">*</span></label>
+        <textarea id="ageGroups" name="Age Groups / Experience Levels Served" rows="2" required></textarea>
       </div>
 
       <div class="field">
-        <label class="field-label" for="priorityServices">Which 1–3 services do you most want more customers for?</label>
-        <textarea id="priorityServices" name="Priority Services" rows="2"></textarea>
-        <p class="helper-text">We'll feature these most on your site.</p>
+        <label class="field-label" for="seasonStructure">Season structure and schedule <span class="req">*</span></label>
+        <textarea id="seasonStructure" name="Season Structure and Schedule" rows="4" required></textarea>
+        <p class="helper-text">Weeks, session days, and workout types.</p>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="programCost">Program cost <span class="req">*</span></label>
+        <input type="text" id="programCost" name="Program Cost" required>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="programHighlights">Which 1–3 things about the program do you most want to highlight?</label>
+        <textarea id="programHighlights" name="Program Highlights" rows="2"></textarea>
       </div>
     </section>
 
-    <!-- 5. Service Area -->
+    <!-- 5. Growth & Results -->
     <section class="section" aria-labelledby="sec5-heading">
-      <h2 class="section-heading" id="sec5-heading"><span class="section-number">05</span>Service Area</h2>
+      <h2 class="section-heading" id="sec5-heading"><span class="section-number">05</span>Growth &amp; Results</h2>
 
       <div class="field">
-        <label class="field-label" for="mainCity">Main city</label>
-        <input type="text" id="mainCity" name="Main City">
+        <label class="field-label" for="enrollmentByYear">Enrollment by year <span class="req">*</span></label>
+        <textarea id="enrollmentByYear" name="Enrollment by Year" rows="3" required></textarea>
+        <p class="helper-text">e.g. "2025: 16 kids, 2026: 53 kids"</p>
       </div>
 
       <div class="field">
-        <label class="field-label" for="otherCities">Other cities, suburbs, or counties you serve</label>
-        <textarea id="otherCities" name="Other Cities/Areas Served" rows="5"></textarea>
-        <p class="helper-text">Up to 14, one per line.</p>
-        <p class="field-error" id="otherCitiesError"></p>
+        <label class="field-label" for="schoolsRepresented">Schools/regions represented</label>
+        <textarea id="schoolsRepresented" name="Schools/Regions Represented" rows="2"></textarea>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="performanceStats">Any performance/improvement stats you track</label>
+        <textarea id="performanceStats" name="Performance/Improvement Stats" rows="2"></textarea>
+        <p class="helper-text">e.g. year-over-year improvement %</p>
       </div>
     </section>
 
-    <!-- 6. What Sets You Apart -->
+    <!-- 6. Coach Bio & Credentials -->
     <section class="section" aria-labelledby="sec6-heading">
-      <h2 class="section-heading" id="sec6-heading"><span class="section-number">06</span>What Sets You Apart</h2>
+      <h2 class="section-heading" id="sec6-heading"><span class="section-number">06</span>Coach Bio &amp; Credentials</h2>
 
       <div class="field">
-        <label class="field-label" for="differentiators">Things we should show off</label>
-        <textarea id="differentiators" name="Differentiators" rows="3"></textarea>
-        <p class="helper-text">Examples: 10+ years in business, veteran owned, fully insured, licensed, warranties, financing, family owned.</p>
+        <label class="field-label" for="coachBackground">Your running/coaching background <span class="req">*</span></label>
+        <textarea id="coachBackground" name="Coach Running/Coaching Background" rows="5" required></textarea>
+        <p class="helper-text">Career highlights, achievements — write it like a bio, we'll style it.</p>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="coachCredentials">Any speaking engagements or credentials worth featuring</label>
+        <textarea id="coachCredentials" name="Speaking Engagements/Credentials" rows="2"></textarea>
+        <p class="helper-text">e.g. clinic appearances</p>
       </div>
     </section>
 
-    <!-- 7. Hours -->
+    <!-- 7. Testimonials & Guest Speakers -->
     <section class="section" aria-labelledby="sec7-heading">
-      <h2 class="section-heading" id="sec7-heading"><span class="section-number">07</span>Hours</h2>
+      <h2 class="section-heading" id="sec7-heading"><span class="section-number">07</span>Testimonials &amp; Guest Speakers</h2>
 
       <div class="field">
-        <label class="field-label" for="hours">Business hours <span class="req">*</span></label>
-        <input type="text" id="hours" name="Business Hours" placeholder="Mon–Fri, 8am–5pm" required>
+        <label class="field-label" for="testimonials">Parent or athlete testimonials</label>
+        <textarea id="testimonials" name="Testimonials" rows="4"></textarea>
+        <p class="helper-text">Paste quotes, and include who said them and their school if relevant.</p>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="guestSpeakers">Guest coaches/speakers who've been involved</label>
+        <textarea id="guestSpeakers" name="Guest Coaches/Speakers" rows="3"></textarea>
+        <p class="helper-text">Names + a 1-line credibility note, e.g. "Olympian," "Hall of Fame coach."</p>
       </div>
     </section>
 
-    <!-- 8. Online Profiles -->
+    <!-- 8. Community Partners -->
     <section class="section" aria-labelledby="sec8-heading">
-      <h2 class="section-heading" id="sec8-heading"><span class="section-number">08</span>Online Profiles</h2>
+      <h2 class="section-heading" id="sec8-heading"><span class="section-number">08</span>Community Partners</h2>
+
+      <div class="field">
+        <label class="field-label" for="communityPartners">Local businesses partnering with or sponsoring the club</label>
+        <textarea id="communityPartners" name="Community Partners" rows="4"></textarea>
+        <p class="helper-text">One per line.</p>
+      </div>
+    </section>
+
+    <!-- 9. Registration & Payment -->
+    <section class="section" aria-labelledby="sec9-heading">
+      <h2 class="section-heading" id="sec9-heading"><span class="section-number">09</span>Registration &amp; Payment</h2>
+
+      <div class="field" role="group" aria-labelledby="paymentProcessorLabel">
+        <span class="field-label" id="paymentProcessorLabel">Which payment processor are you using? <span class="req">*</span></span>
+        <div class="radio-row">
+          <label><input type="radio" name="Payment Processor" value="Stripe" required> Stripe</label>
+          <label><input type="radio" name="Payment Processor" value="PayPal" required> PayPal</label>
+        </div>
+      </div>
+
+      <div class="field" role="group" aria-labelledby="waiverLabel">
+        <span class="field-label" id="waiverLabel">Do you have a waiver platform set up?</span>
+        <div class="radio-row">
+          <label><input type="radio" name="Waiver Platform Set Up" value="Yes"> Yes</label>
+          <label><input type="radio" name="Waiver Platform Set Up" value="No"> No</label>
+        </div>
+        <p class="helper-text">e.g. Smartwaiver. If not, we'll walk you through it.</p>
+      </div>
+    </section>
+
+    <!-- 10. Online Profiles -->
+    <section class="section" aria-labelledby="sec10-heading">
+      <h2 class="section-heading" id="sec10-heading"><span class="section-number">10</span>Online Profiles</h2>
       <p class="section-helper">Copy and paste the link from your browser.</p>
 
       <div class="field-grid">
@@ -507,15 +575,15 @@
       </div>
     </section>
 
-    <!-- 9. Logo & Photos -->
-    <section class="section" aria-labelledby="sec9-heading">
-      <h2 class="section-heading" id="sec9-heading"><span class="section-number">09</span>Logo &amp; Photos</h2>
+    <!-- 11. Logo, Photos & Video -->
+    <section class="section" aria-labelledby="sec11-heading">
+      <h2 class="section-heading" id="sec11-heading"><span class="section-number">11</span>Logo, Photos &amp; Video</h2>
 
       <div class="field" role="group" aria-labelledby="haveLogoLabel">
-        <span class="field-label" id="haveLogoLabel">Do you have a logo? <span class="req">*</span></span>
+        <span class="field-label" id="haveLogoLabel">Do you have a logo?</span>
         <div class="radio-row">
-          <label><input type="radio" name="Have a Logo" value="Yes" class="logo-radio" required> Yes</label>
-          <label><input type="radio" name="Have a Logo" value="No, I need one made" class="logo-radio" required> No, I need one made</label>
+          <label><input type="radio" name="Have a Logo" value="Yes" class="logo-radio"> Yes</label>
+          <label><input type="radio" name="Have a Logo" value="No, I need one made" class="logo-radio"> No, I need one made</label>
         </div>
         <div class="conditional-field" id="logoNoteField">
           <div class="instruction-block">
@@ -526,14 +594,14 @@
       </div>
 
       <div class="instruction-block">
-        <p class="instruction-title">Photos</p>
-        <p>Email 25–60 of your best job photos to <a href="mailto:bradley@getarclo.com" id="photosMailLink">bradley@getarclo.com</a>. Include at least one of you or your team, because customers want to see who they'll be working with. Real photos convert far better than stock.</p>
+        <p class="instruction-title">Photos &amp; Video</p>
+        <p>Email 20+ photos and any video clips of the program in action (practices, races, guest speakers, kids training) to <a href="mailto:bradley@getarclo.com" id="photosMailLink">bradley@getarclo.com</a>. Include a headshot or action photo of yourself as the coach.</p>
       </div>
     </section>
 
-    <!-- 10. Domain -->
-    <section class="section" aria-labelledby="sec10-heading">
-      <h2 class="section-heading" id="sec10-heading"><span class="section-number">10</span>Domain</h2>
+    <!-- 12. Domain -->
+    <section class="section" aria-labelledby="sec12-heading">
+      <h2 class="section-heading" id="sec12-heading"><span class="section-number">12</span>Domain</h2>
 
       <div class="field" role="group" aria-labelledby="ownDomainLabel">
         <span class="field-label" id="ownDomainLabel">Do you already own a domain (like yourbusiness.com)?</span>
@@ -553,7 +621,7 @@
     <section class="section">
       <div class="checkbox-row">
         <input type="checkbox" id="consent" name="Consent" value="Yes" required>
-        <label for="consent">I agree to the <a href="https://getarclo.com/terms.html" target="_blank" rel="noopener">terms and conditions</a> and consent to receive text messages from Arclo about my project. Message &amp; data rates may apply. Reply STOP to opt out. <span class="req">*</span></label>
+        <label for="consent">I agree to the <a href="https://getarclo.com/terms.html" target="_blank" rel="noopener">terms and conditions</a> and confirm the information provided is accurate to the best of my knowledge. <span class="req">*</span></label>
       </div>
     </section>
 
@@ -590,53 +658,15 @@
       });
     });
 
-    // EIN auto-format as XX-XXXXXXX
-    var einInput = document.getElementById('ein');
-    einInput.addEventListener('input', function(){
-      var digits = this.value.replace(/\D/g, '').slice(0, 9);
-      this.value = digits.length > 2 ? (digits.slice(0, 2) + '-' + digits.slice(2)) : digits;
-    });
-
-    // Sole proprietor, no EIN
-    var noEinCheckbox = document.getElementById('noEin');
-    noEinCheckbox.addEventListener('change', function(){
-      if (this.checked) {
-        einInput.required = false;
-        einInput.disabled = true;
-        einInput.value = '';
-      } else {
-        einInput.required = true;
-        einInput.disabled = false;
-      }
-    });
-
-    // Service area: max 14 non-empty lines
-    var otherCitiesInput = document.getElementById('otherCities');
-    var otherCitiesError = document.getElementById('otherCitiesError');
-    function countNonEmptyLines(value){
-      return value.split('\n').map(function(l){ return l.trim(); }).filter(function(l){ return l.length > 0; }).length;
-    }
-    function validateOtherCities(){
-      var count = countNonEmptyLines(otherCitiesInput.value);
-      if (count > 14) {
-        otherCitiesError.textContent = "That's " + count + " — please list 14 or fewer cities, suburbs, or counties, one per line.";
-        otherCitiesError.classList.add('visible');
-        return false;
-      }
-      otherCitiesError.classList.remove('visible');
-      return true;
-    }
-    otherCitiesInput.addEventListener('input', validateOtherCities);
-
-    // Prefill the photos email subject with the business name, kept in sync as it's typed
+    // Prefill the photos email subject with the program name, kept in sync as it's typed
     var photosMailLink = document.getElementById('photosMailLink');
-    var customerBusinessNameInput = document.getElementById('customerBusinessName');
+    var programNameInput = document.getElementById('programName');
     function updatePhotosMailLink(){
-      var name = customerBusinessNameInput.value.trim();
+      var name = programNameInput.value.trim();
       var subject = name ? ('Photos – ' + name) : 'Photos';
       photosMailLink.href = 'mailto:bradley@getarclo.com?subject=' + encodeURIComponent(subject);
     }
-    customerBusinessNameInput.addEventListener('input', updatePhotosMailLink);
+    programNameInput.addEventListener('input', updatePhotosMailLink);
     updatePhotosMailLink();
 
     function normalizeUrl(value){
@@ -657,8 +687,8 @@
     var ownDomainYes = document.querySelector('.domain-radio[value="Yes"]');
     var domainNameInput = document.getElementById('domainName');
 
-    // Builds the submission payload in a fixed field order (Business Registration
-    // first, for A2P review) regardless of the on-page visual section order.
+    // Builds the submission payload. No Business Registration section to
+    // prioritize in this variant, so this just follows on-page order.
     function buildOrderedFormData(){
       var fd = new FormData();
 
@@ -666,35 +696,41 @@
       fd.append('_subject', document.getElementById('subjectField').value);
       fd.append('_gotcha', document.getElementById('gotchaField').value);
 
-      // Business Registration
-      fd.append('Legal Business Name', document.getElementById('legalBusinessName').value);
-      fd.append('Business Type', getRadioValue('Business Type'));
-      fd.append('EIN (Tax ID)', noEinCheckbox.checked ? 'NO EIN — sole proprietor A2P' : einInput.value);
-      fd.append('Business Address', document.getElementById('businessAddress').value);
-
       // Contact
       fd.append('Full Name', document.getElementById('fullName').value);
       fd.append('Email', document.getElementById('email').value);
       fd.append('Phone for New Lead Alerts', document.getElementById('leadPhone').value);
 
-      // Your Business
-      fd.append('Business Name (Customer-Facing)', customerBusinessNameInput.value);
+      // Your Program
+      fd.append('Program Name', programNameInput.value);
       fd.append('Current Website', normalizeUrl(document.getElementById('currentWebsite').value));
-      fd.append('About Your Business', document.getElementById('aboutBusiness').value);
+      fd.append('About the Program', document.getElementById('aboutProgram').value);
 
-      // Services
-      fd.append('Services Offered', document.getElementById('services').value);
-      fd.append('Priority Services', document.getElementById('priorityServices').value);
+      // Program Structure
+      fd.append('Age Groups / Experience Levels Served', document.getElementById('ageGroups').value);
+      fd.append('Season Structure and Schedule', document.getElementById('seasonStructure').value);
+      fd.append('Program Cost', document.getElementById('programCost').value);
+      fd.append('Program Highlights', document.getElementById('programHighlights').value);
 
-      // Service Area
-      fd.append('Main City', document.getElementById('mainCity').value);
-      fd.append('Other Cities/Areas Served', otherCitiesInput.value);
+      // Growth & Results
+      fd.append('Enrollment by Year', document.getElementById('enrollmentByYear').value);
+      fd.append('Schools/Regions Represented', document.getElementById('schoolsRepresented').value);
+      fd.append('Performance/Improvement Stats', document.getElementById('performanceStats').value);
 
-      // What Sets You Apart
-      fd.append('Differentiators', document.getElementById('differentiators').value);
+      // Coach Bio & Credentials
+      fd.append('Coach Running/Coaching Background', document.getElementById('coachBackground').value);
+      fd.append('Speaking Engagements/Credentials', document.getElementById('coachCredentials').value);
 
-      // Hours
-      fd.append('Business Hours', document.getElementById('hours').value);
+      // Testimonials & Guest Speakers
+      fd.append('Testimonials', document.getElementById('testimonials').value);
+      fd.append('Guest Coaches/Speakers', document.getElementById('guestSpeakers').value);
+
+      // Community Partners
+      fd.append('Community Partners', document.getElementById('communityPartners').value);
+
+      // Registration & Payment
+      fd.append('Payment Processor', getRadioValue('Payment Processor'));
+      fd.append('Waiver Platform Set Up', getRadioValue('Waiver Platform Set Up'));
 
       // Online Profiles
       fd.append('Google Business Profile', normalizeUrl(document.getElementById('gbp').value));
@@ -704,7 +740,7 @@
       fd.append('BBB', normalizeUrl(document.getElementById('bbb').value));
       fd.append('TikTok', normalizeUrl(document.getElementById('tiktok').value));
 
-      // Logo & Photos
+      // Logo, Photos & Video
       fd.append('Have a Logo', getRadioValue('Have a Logo'));
 
       // Domain
@@ -712,7 +748,7 @@
       fd.append('Domain Name', (ownDomainYes && ownDomainYes.checked) ? domainNameInput.value : '');
 
       // Consent
-      fd.append('Consent (Terms & SMS)', document.getElementById('consent').checked ? 'Yes' : 'No');
+      fd.append('Consent', document.getElementById('consent').checked ? 'Yes' : 'No');
 
       return fd;
     }
@@ -728,12 +764,6 @@
       errorText.style.display = 'none';
 
       if (!form.reportValidity()) {
-        return;
-      }
-
-      if (!validateOtherCities()) {
-        otherCitiesInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        otherCitiesInput.focus();
         return;
       }
 
