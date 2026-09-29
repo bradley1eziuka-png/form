@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <!--
-  TEMPORARY VARIANT — Monroe Cross Country Club (MCCC)
+  TEMPORARY VARIANT: Monroe Cross Country Club (MCCC)
   Created 2026-09-29, for Todd to fill out. Revert to the standard Arclo
   onboarding form with:
     git checkout e9cfb3d -- index.html
@@ -10,43 +10,47 @@
   question set", the commit immediately before this MCCC variant.)
 
   Changes made for this variant, relative to that commit:
-    - Section 02 "Business Registration" (legal name, business type, EIN,
-      business address) removed entirely — MCCC doesn't need A2P/carrier
-      texting registration. Numbering intentionally skips 02 below so each
-      remaining section keeps the number the user referenced it by.
-    - Section 03 "Your Business" -> "Your Program": business name field
-      became "Program name" (id="programName", pre-filled "Monroe Cross
-      Country Club"); "About your business" -> "About the program" with
-      new parent-facing helper copy.
-    - Section 04 "Services" -> "Program Structure": replaced with age
+    - Section "Business Registration" (legal name, business type, EIN,
+      business address) removed entirely. MCCC doesn't need A2P/carrier
+      texting registration. Remaining sections are numbered sequentially
+      (01 through 11).
+    - "Your Business" -> "Your Program" (02): business name field became
+      "Program name" (id="programName", pre-filled "Monroe Cross Country
+      Club"); "About your business" -> "About the program" with new
+      parent-facing helper copy; added an optional "Homepage opening
+      line" field right after it.
+    - "Services" -> "Program Structure" (03): replaced with age
       groups/levels served, season structure & schedule, program cost,
       and an optional "things to highlight" field.
-    - Section 05 "Service Area" -> "Growth & Results": replaced with
-      enrollment by year, schools/regions represented, and performance/
-      improvement stats. The old 14-line service-area validator and its
-      JS were removed.
-    - Section 06 "What Sets You Apart" -> "Coach Bio & Credentials":
-      coaching background (required) + speaking engagements/credentials
-      (optional).
-    - Section 07 "Testimonials & Guest Speakers" — new section, replacing
-      the old "Hours" slot.
-    - Section 08 "Community Partners" — new section, replacing the old
-      "Online Profiles" slot number.
-    - Section 09 "Registration & Payment" — new section (Stripe/PayPal,
-      waiver platform), replacing the old "Logo & Photos" slot number.
-    - Section 10 "Online Profiles" — unchanged, renumbered to 10 (fields
-      were already optional, so no field-level change was needed).
-    - Section 11 "Logo & Photos" -> "Logo, Photos & Video": logo question
-      is no longer required; photo instructions updated to ask for photos
-      and video together.
-    - Section 12 "Domain" — unchanged, renumbered to 12.
+    - "Service Area" -> "Growth & Results" (04): replaced with enrollment
+      by year, schools/regions represented, and performance/improvement
+      stats. The old 14-line service-area validator and its JS were
+      removed.
+    - "What Sets You Apart" -> "Coach Bio & Credentials" (05): coaching
+      background (required) + speaking engagements/credentials (optional).
+    - "Testimonials & Guest Speakers" (06): new section, replacing the old
+      "Hours" slot.
+    - "Community Partners" (07): new section (sponsors/partners list).
+    - "Registration & Payment" (08): new section (Stripe/PayPal, waiver
+      platform).
+    - "Online Profiles" (09): unchanged content, fields were already
+      optional.
+    - "Logo & Photos" -> "Logo, Photos & Video" (10): logo question is no
+      longer required; photo instructions updated to ask for photos,
+      video clips, and the existing ~2.5 minute promo video.
+    - "Domain" (11): unchanged.
     - Consent checkbox copy replaced: dropped the SMS/"Reply STOP"
       language, now just terms agreement + accuracy confirmation.
+    - Header intro text no longer mentions business texting/SMS setup,
+      since that isn't part of this project's scope.
+    - Contact email for logo/photo/video submissions changed to
+      bradleyeziuka@gmail.com for this project only (was
+      bradley@getarclo.com).
     - JS: removed EIN auto-formatting, the sole-proprietor EIN-exemption
       logic, and the 14-line service-area validator. buildOrderedFormData()
-      was rewritten for this field set — with no Business Registration
+      was rewritten for this field set. With no Business Registration
       section to prioritize, it now just follows on-page order. The
-      "photos email subject" prefill now binds to the Program name field
+      "photos email subject" prefill binds to the Program name field
       instead of the business name field.
 -->
 <meta charset="UTF-8">
@@ -381,7 +385,7 @@
         id="formTitle"
         value="Website Information"
         aria-label="Form heading">
-      <p class="intro-text">This is the content for your new website and the info we need to set up your business texting. It takes about 10 minutes. If you're unsure about something, leave it blank and we'll talk it through.</p>
+      <p class="intro-text">This is the content for your new website. It takes about 10 minutes. If you're unsure about something, leave it blank and we'll talk it through.</p>
       <p class="required-note">Fields marked * are required.</p>
     </div>
 
@@ -406,9 +410,9 @@
       </div>
     </section>
 
-    <!-- 3. Your Program -->
-    <section class="section" aria-labelledby="sec3-heading">
-      <h2 class="section-heading" id="sec3-heading"><span class="section-number">03</span>Your Program</h2>
+    <!-- 2. Your Program -->
+    <section class="section" aria-labelledby="sec2-heading">
+      <h2 class="section-heading" id="sec2-heading"><span class="section-number">02</span>Your Program</h2>
 
       <div class="field">
         <label class="field-label" for="programName">Program name</label>
@@ -423,13 +427,19 @@
       <div class="field">
         <label class="field-label" for="aboutProgram">About the program <span class="req">*</span></label>
         <textarea id="aboutProgram" name="About the Program" rows="5" required></textarea>
-        <p class="helper-text">Tell us about MCCC in your own words — the philosophy, what makes it different from a typical summer camp, and what you want parents to understand before they sign their kid up. (3–5 sentences, written like you'd say it to a parent.)</p>
+        <p class="helper-text">Tell us about MCCC in your own words: the philosophy, what makes it different from a typical summer camp, and what you want parents to understand before they sign their kid up. (3–5 sentences, written like you'd say it to a parent.)</p>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="homepageOpeningLine">Homepage opening line</label>
+        <textarea id="homepageOpeningLine" name="Homepage Opening Line" rows="3"></textarea>
+        <p class="helper-text">We talked about something like "You'll learn to hurt, you'll learn to succeed, you'll learn to be disciplined." Want to keep that direction for the homepage, or go a different way? Write out what you'd want it to say, or leave blank and we'll draft something.</p>
       </div>
     </section>
 
-    <!-- 4. Program Structure -->
-    <section class="section" aria-labelledby="sec4-heading">
-      <h2 class="section-heading" id="sec4-heading"><span class="section-number">04</span>Program Structure</h2>
+    <!-- 3. Program Structure -->
+    <section class="section" aria-labelledby="sec3-heading">
+      <h2 class="section-heading" id="sec3-heading"><span class="section-number">03</span>Program Structure</h2>
 
       <div class="field">
         <label class="field-label" for="ageGroups">Age groups / experience levels served <span class="req">*</span></label>
@@ -453,9 +463,9 @@
       </div>
     </section>
 
-    <!-- 5. Growth & Results -->
-    <section class="section" aria-labelledby="sec5-heading">
-      <h2 class="section-heading" id="sec5-heading"><span class="section-number">05</span>Growth &amp; Results</h2>
+    <!-- 4. Growth & Results -->
+    <section class="section" aria-labelledby="sec4-heading">
+      <h2 class="section-heading" id="sec4-heading"><span class="section-number">04</span>Growth &amp; Results</h2>
 
       <div class="field">
         <label class="field-label" for="enrollmentByYear">Enrollment by year <span class="req">*</span></label>
@@ -475,14 +485,14 @@
       </div>
     </section>
 
-    <!-- 6. Coach Bio & Credentials -->
-    <section class="section" aria-labelledby="sec6-heading">
-      <h2 class="section-heading" id="sec6-heading"><span class="section-number">06</span>Coach Bio &amp; Credentials</h2>
+    <!-- 5. Coach Bio & Credentials -->
+    <section class="section" aria-labelledby="sec5-heading">
+      <h2 class="section-heading" id="sec5-heading"><span class="section-number">05</span>Coach Bio &amp; Credentials</h2>
 
       <div class="field">
         <label class="field-label" for="coachBackground">Your running/coaching background <span class="req">*</span></label>
         <textarea id="coachBackground" name="Coach Running/Coaching Background" rows="5" required></textarea>
-        <p class="helper-text">Career highlights, achievements — write it like a bio, we'll style it.</p>
+        <p class="helper-text">Career highlights, achievements. Write it like a bio, we'll style it.</p>
       </div>
 
       <div class="field">
@@ -492,9 +502,9 @@
       </div>
     </section>
 
-    <!-- 7. Testimonials & Guest Speakers -->
-    <section class="section" aria-labelledby="sec7-heading">
-      <h2 class="section-heading" id="sec7-heading"><span class="section-number">07</span>Testimonials &amp; Guest Speakers</h2>
+    <!-- 6. Testimonials & Guest Speakers -->
+    <section class="section" aria-labelledby="sec6-heading">
+      <h2 class="section-heading" id="sec6-heading"><span class="section-number">06</span>Testimonials &amp; Guest Speakers</h2>
 
       <div class="field">
         <label class="field-label" for="testimonials">Parent or athlete testimonials</label>
@@ -509,9 +519,9 @@
       </div>
     </section>
 
-    <!-- 8. Community Partners -->
-    <section class="section" aria-labelledby="sec8-heading">
-      <h2 class="section-heading" id="sec8-heading"><span class="section-number">08</span>Community Partners</h2>
+    <!-- 7. Community Partners -->
+    <section class="section" aria-labelledby="sec7-heading">
+      <h2 class="section-heading" id="sec7-heading"><span class="section-number">07</span>Community Partners</h2>
 
       <div class="field">
         <label class="field-label" for="communityPartners">Local businesses partnering with or sponsoring the club</label>
@@ -520,9 +530,9 @@
       </div>
     </section>
 
-    <!-- 9. Registration & Payment -->
-    <section class="section" aria-labelledby="sec9-heading">
-      <h2 class="section-heading" id="sec9-heading"><span class="section-number">09</span>Registration &amp; Payment</h2>
+    <!-- 8. Registration & Payment -->
+    <section class="section" aria-labelledby="sec8-heading">
+      <h2 class="section-heading" id="sec8-heading"><span class="section-number">08</span>Registration &amp; Payment</h2>
 
       <div class="field" role="group" aria-labelledby="paymentProcessorLabel">
         <span class="field-label" id="paymentProcessorLabel">Which payment processor are you using? <span class="req">*</span></span>
@@ -542,9 +552,9 @@
       </div>
     </section>
 
-    <!-- 10. Online Profiles -->
-    <section class="section" aria-labelledby="sec10-heading">
-      <h2 class="section-heading" id="sec10-heading"><span class="section-number">10</span>Online Profiles</h2>
+    <!-- 9. Online Profiles -->
+    <section class="section" aria-labelledby="sec9-heading">
+      <h2 class="section-heading" id="sec9-heading"><span class="section-number">09</span>Online Profiles</h2>
       <p class="section-helper">Copy and paste the link from your browser.</p>
 
       <div class="field-grid">
@@ -575,9 +585,9 @@
       </div>
     </section>
 
-    <!-- 11. Logo, Photos & Video -->
-    <section class="section" aria-labelledby="sec11-heading">
-      <h2 class="section-heading" id="sec11-heading"><span class="section-number">11</span>Logo, Photos &amp; Video</h2>
+    <!-- 10. Logo, Photos & Video -->
+    <section class="section" aria-labelledby="sec10-heading">
+      <h2 class="section-heading" id="sec10-heading"><span class="section-number">10</span>Logo, Photos &amp; Video</h2>
 
       <div class="field" role="group" aria-labelledby="haveLogoLabel">
         <span class="field-label" id="haveLogoLabel">Do you have a logo?</span>
@@ -588,20 +598,20 @@
         <div class="conditional-field" id="logoNoteField">
           <div class="instruction-block">
             <p class="instruction-title">Logo file</p>
-            <p>Email your logo to <a href="mailto:bradley@getarclo.com">bradley@getarclo.com</a>.</p>
+            <p>Email your logo to <a href="mailto:bradleyeziuka@gmail.com">bradleyeziuka@gmail.com</a>.</p>
           </div>
         </div>
       </div>
 
       <div class="instruction-block">
         <p class="instruction-title">Photos &amp; Video</p>
-        <p>Email 20+ photos and any video clips of the program in action (practices, races, guest speakers, kids training) to <a href="mailto:bradley@getarclo.com" id="photosMailLink">bradley@getarclo.com</a>. Include a headshot or action photo of yourself as the coach.</p>
+        <p>Email 20+ photos and any video clips of the program in action (practices, races, guest speakers, kids training) to <a href="mailto:bradleyeziuka@gmail.com" id="photosMailLink">bradleyeziuka@gmail.com</a>. Include a headshot or action photo of yourself as the coach. Also include the ~2.5 minute promo video you already have if it's ready to send. No need to re-shoot or re-edit anything.</p>
       </div>
     </section>
 
-    <!-- 12. Domain -->
-    <section class="section" aria-labelledby="sec12-heading">
-      <h2 class="section-heading" id="sec12-heading"><span class="section-number">12</span>Domain</h2>
+    <!-- 11. Domain -->
+    <section class="section" aria-labelledby="sec11-heading">
+      <h2 class="section-heading" id="sec11-heading"><span class="section-number">11</span>Domain</h2>
 
       <div class="field" role="group" aria-labelledby="ownDomainLabel">
         <span class="field-label" id="ownDomainLabel">Do you already own a domain (like yourbusiness.com)?</span>
@@ -664,7 +674,7 @@
     function updatePhotosMailLink(){
       var name = programNameInput.value.trim();
       var subject = name ? ('Photos – ' + name) : 'Photos';
-      photosMailLink.href = 'mailto:bradley@getarclo.com?subject=' + encodeURIComponent(subject);
+      photosMailLink.href = 'mailto:bradleyeziuka@gmail.com?subject=' + encodeURIComponent(subject);
     }
     programNameInput.addEventListener('input', updatePhotosMailLink);
     updatePhotosMailLink();
@@ -705,6 +715,7 @@
       fd.append('Program Name', programNameInput.value);
       fd.append('Current Website', normalizeUrl(document.getElementById('currentWebsite').value));
       fd.append('About the Program', document.getElementById('aboutProgram').value);
+      fd.append('Homepage Opening Line', document.getElementById('homepageOpeningLine').value);
 
       // Program Structure
       fd.append('Age Groups / Experience Levels Served', document.getElementById('ageGroups').value);
