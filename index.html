@@ -15,6 +15,7 @@
     --text:#1A2233;
     --text-muted:#5B6472;
     --danger:#B3261E;
+    --callout-bg:#EEF2FA;
     --font-heading:'Helvetica Neue', Helvetica, Arial, sans-serif;
     --font-body:system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   }
@@ -28,6 +29,7 @@
       --text:#E7EAF0;
       --text-muted:#9AA3B2;
       --danger:#FF6B6B;
+      --callout-bg:#16233A;
     }
   }
   :root[data-theme="dark"]{
@@ -38,6 +40,7 @@
     --text:#E7EAF0;
     --text-muted:#9AA3B2;
     --danger:#FF6B6B;
+    --callout-bg:#16233A;
   }
 
   *,*::before,*::after{ box-sizing:border-box; }
@@ -102,7 +105,7 @@
     font-size:19px;
     font-weight:700;
     color:var(--heading);
-    margin:0 0 18px;
+    margin:0 0 20px;
   }
   .section-number{
     font-family:var(--font-body);
@@ -122,24 +125,30 @@
   }
 
   /* Fields */
-  .field{ margin-bottom:16px; }
+  .field{ margin-bottom:22px; }
   .field:last-child{ margin-bottom:0; }
   .field-label{
     display:block;
     font-weight:600;
     font-size:14px;
-    margin-bottom:6px;
+    margin-bottom:8px;
     color:var(--text);
   }
   .field-label .req{
     color:var(--heading);
     font-weight:700;
+    margin-left:2px;
+  }
+  .optional-tag{
+    font-weight:400;
+    color:var(--text-muted);
+    font-size:13px;
   }
   .helper-text{
     font-size:13px;
     color:var(--text-muted);
-    margin-top:5px;
-    line-height:1.45;
+    margin-top:8px;
+    line-height:1.5;
   }
   .field-error{
     display:none;
@@ -149,6 +158,23 @@
     line-height:1.45;
   }
   .field-error.visible{ display:block; }
+
+  /* Important instruction callout: for quantity/format requirements that
+     directly affect submission quality. Not an error or warning state. */
+  .instruction-callout{
+    background:var(--callout-bg);
+    border-left:3px solid var(--heading);
+    border-radius:6px;
+    padding:12px 14px;
+    margin-top:10px;
+    font-size:13.5px;
+    line-height:1.5;
+    color:var(--text);
+  }
+  .instruction-callout strong{ font-weight:700; }
+  .instruction-callout + .helper-text{ margin-top:8px; }
+
+  .textarea-lg{ min-height:130px; }
 
   input[type="text"],
   input[type="email"],
@@ -250,10 +276,16 @@
     font-size:14.5px;
     margin:0 0 4px;
   }
-  .instruction-block p:last-child{
-    margin:0;
+  .instruction-block p{
+    margin:0 0 8px;
     font-size:14px;
     color:var(--text);
+  }
+  .instruction-block p:last-child{ margin-bottom:0; }
+  .instruction-block p.helper-text{
+    font-size:13px;
+    color:var(--text-muted);
+    margin-top:4px;
   }
   .instruction-block a{ color:var(--heading); }
 
@@ -335,6 +367,7 @@
         aria-label="Form heading">
       <p class="intro-text">This is the content for your new website and the info we need to set up your business texting. It takes about 10 minutes. If you're unsure about something, leave it blank and we'll talk it through.</p>
       <p class="required-note">Fields marked * are required.</p>
+      <p class="instruction-callout">The more detail you give us, the better we can make your website. Don't worry about perfect wording, we'll handle that.</p>
     </div>
 
     <!-- 1. Contact -->
@@ -408,14 +441,14 @@
       </div>
 
       <div class="field">
-        <label class="field-label" for="currentWebsite">Current website</label>
+        <label class="field-label" for="currentWebsite">Current website <span class="optional-tag">(optional)</span></label>
         <input type="text" id="currentWebsite" name="Current Website" placeholder="https://">
       </div>
 
       <div class="field">
         <label class="field-label" for="aboutBusiness">About your business <span class="req">*</span></label>
-        <textarea id="aboutBusiness" name="About Your Business" rows="5" required></textarea>
-        <p class="helper-text">3–5 sentences about you and how you got started. Customers want to know who they're hiring, so write it like you'd say it to them.</p>
+        <textarea id="aboutBusiness" name="About Your Business" rows="5" required class="textarea-lg" placeholder="Tell us how the business started, how long you've been doing this, who you serve, and what matters most to you..."></textarea>
+        <div class="instruction-callout">Write <strong>3–5 sentences</strong> about your business, how you got started, and what customers should know about you. Write it like you'd explain your business to a customer.</div>
       </div>
     </section>
 
@@ -425,14 +458,15 @@
 
       <div class="field">
         <label class="field-label" for="services">All services you offer, one per line <span class="req">*</span></label>
-        <textarea id="services" name="Services Offered" rows="6" required></textarea>
-        <p class="helper-text">List at least 4. Be specific: "roof replacement" and "storm damage repair" rather than "roofing."</p>
+        <textarea id="services" name="Services Offered" rows="6" required class="textarea-lg" placeholder="Roof replacement&#10;Storm damage repair&#10;Roof inspections&#10;Gutter installation"></textarea>
+        <div class="instruction-callout">List <strong>at least 4 services</strong>, one per line. Be specific so we can build dedicated content around what you actually do.</div>
+        <p class="helper-text">Example:<br>Roof replacement<br>Storm damage repair<br>Roof inspections<br>Gutter installation</p>
       </div>
 
       <div class="field">
-        <label class="field-label" for="priorityServices">Which 1–3 services do you most want more customers for?</label>
-        <textarea id="priorityServices" name="Priority Services" rows="2"></textarea>
-        <p class="helper-text">We'll feature these most on your site.</p>
+        <label class="field-label" for="priorityServices">Which <strong>1–3 services</strong> do you most want more customers for? <span class="optional-tag">(optional)</span></label>
+        <textarea id="priorityServices" name="Priority Services" rows="2" class="textarea-lg"></textarea>
+        <p class="helper-text">We'll feature these more prominently throughout your website.</p>
       </div>
     </section>
 
@@ -446,9 +480,9 @@
       </div>
 
       <div class="field">
-        <label class="field-label" for="otherCities">Other cities, suburbs, or counties you serve</label>
-        <textarea id="otherCities" name="Other Cities/Areas Served" rows="5"></textarea>
-        <p class="helper-text">Up to 14, one per line.</p>
+        <label class="field-label" for="otherCities">Other cities, suburbs, or counties you serve <span class="optional-tag">(optional)</span></label>
+        <textarea id="otherCities" name="Other Cities/Areas Served" rows="5" class="textarea-lg" placeholder="Monroe&#10;Dundee&#10;Temperance&#10;Carleton&#10;Maybee"></textarea>
+        <div class="instruction-callout">Add <strong>up to 14</strong> cities, suburbs, or counties you serve, one per line.</div>
         <p class="field-error" id="otherCitiesError"></p>
       </div>
     </section>
@@ -458,9 +492,10 @@
       <h2 class="section-heading" id="sec6-heading"><span class="section-number">06</span>What Sets You Apart</h2>
 
       <div class="field">
-        <label class="field-label" for="differentiators">Things we should show off</label>
-        <textarea id="differentiators" name="Differentiators" rows="3"></textarea>
-        <p class="helper-text">Examples: 10+ years in business, veteran owned, fully insured, licensed, warranties, financing, family owned.</p>
+        <label class="field-label" for="differentiators">What should customers know about you? <span class="optional-tag">(optional)</span></label>
+        <textarea id="differentiators" name="Differentiators" rows="3" class="textarea-lg" placeholder="10+ years in business&#10;Veteran-owned&#10;Fully insured and licensed&#10;Free estimates"></textarea>
+        <div class="instruction-callout">List anything that helps customers trust or choose your business.</div>
+        <p class="helper-text">Examples: 10+ years in business, veteran-owned, family-owned, licensed, insured, warranties, financing, certifications, awards, guarantees, special equipment, or unique experience.</p>
       </div>
     </section>
 
@@ -526,8 +561,10 @@
       </div>
 
       <div class="instruction-block">
-        <p class="instruction-title">Photos</p>
-        <p>Email 25–60 of your best job photos to <a href="mailto:bradley@getarclo.com" id="photosMailLink">bradley@getarclo.com</a>. Include at least one of you or your team, because customers want to see who they'll be working with. Real photos convert far better than stock.</p>
+        <p class="instruction-title">Photos: Important</p>
+        <p>Email <strong>25–60</strong> of your best job photos to <a href="mailto:bradley@getarclo.com" id="photosMailLink">bradley@getarclo.com</a>.</p>
+        <p><strong>Include at least one</strong> clear photo of you or your team. Customers want to see who they'll actually be working with.</p>
+        <p class="helper-text">Real project and team photos are strongly preferred over stock photography.</p>
       </div>
     </section>
 
