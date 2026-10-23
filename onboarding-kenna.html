@@ -418,19 +418,6 @@
         </div>
       </div>
 
-      <div class="conditional-field" id="einField">
-        <div class="field">
-          <label class="field-label" for="ein">EIN (Tax ID) <span class="req">*</span></label>
-          <input type="text" id="ein" name="EIN (Tax ID)" inputmode="numeric" maxlength="10" pattern="\d{2}-\d{7}">
-          <p class="helper-text">Your 9-digit federal Tax ID number.</p>
-        </div>
-      </div>
-
-      <div class="field">
-        <label class="field-label" for="mailingAddress">Mailing address <span class="req">*</span></label>
-        <input type="text" id="mailingAddress" name="Business Address" required>
-        <p class="helper-text">Used only to register your texting number with carriers. It will NOT appear on your website. A home address is fine. No PO boxes.</p>
-      </div>
     </section>
 
     <!-- 3. Your Business -->
@@ -758,29 +745,6 @@
       return v;
     }
 
-    // Conditional field: Business type -> EIN (only LLC/Other need it)
-    var businessTypeRadios = document.querySelectorAll('input[name="Business Type"]');
-    var einField = document.getElementById('einField');
-    var einInput = document.getElementById('ein');
-    function updateEinVisibility(){
-      var value = getRadioValue('Business Type');
-      var show = (value === 'LLC' || value === 'Other');
-      einField.style.display = show ? 'block' : 'none';
-      einInput.required = show;
-      einInput.disabled = !show;
-      if (!show) einInput.value = '';
-    }
-    businessTypeRadios.forEach(function(radio){
-      radio.addEventListener('change', updateEinVisibility);
-    });
-    updateEinVisibility();
-
-    // EIN auto-format as XX-XXXXXXX
-    einInput.addEventListener('input', function(){
-      var digits = this.value.replace(/\D/g, '').slice(0, 9);
-      this.value = digits.length > 2 ? (digits.slice(0, 2) + '-' + digits.slice(2)) : digits;
-    });
-
     // Required checkbox groups: Services Offered, Sports Shot
     var servicesError = document.getElementById('servicesOfferedError');
     var sportsError = document.getElementById('sportsShotError');
@@ -831,8 +795,6 @@
       // Business Registration
       fd.append('Legal Business Name', document.getElementById('legalName').value);
       fd.append('Business Type', getRadioValue('Business Type'));
-      fd.append('EIN (Tax ID)', einInput.value);
-      fd.append('Business Address', document.getElementById('mailingAddress').value);
 
       // Contact
       fd.append('Full Name', document.getElementById('fullName').value);
