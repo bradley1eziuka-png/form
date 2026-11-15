@@ -394,39 +394,17 @@
     <!-- 2. Business Registration -->
     <section class="section" aria-labelledby="sec2-heading">
       <h2 class="section-heading" id="sec2-heading"><span class="section-number">02</span>Business Registration</h2>
-      <p class="section-helper">We use this to register your business texting number with the phone carriers so your texts to customers get delivered instead of blocked. It must match your IRS records exactly.</p>
 
       <div class="field">
         <label class="field-label" for="legalBusinessName">Legal business name <span class="req">*</span></label>
         <input type="text" id="legalBusinessName" name="Legal Business Name" required>
-        <p class="helper-text">Exactly as it appears on your EIN letter from the IRS, including LLC, Inc., etc.</p>
-      </div>
-
-      <div class="field" role="group" aria-labelledby="businessTypeLabel">
-        <span class="field-label" id="businessTypeLabel">Business type <span class="req">*</span></span>
-        <div class="radio-row">
-          <label><input type="radio" name="Business Type" value="LLC" required> LLC</label>
-          <label><input type="radio" name="Business Type" value="Corporation" required> Corporation</label>
-          <label><input type="radio" name="Business Type" value="Sole proprietor" required> Sole proprietor</label>
-          <label><input type="radio" name="Business Type" value="Partnership" required> Partnership</label>
-          <label><input type="radio" name="Business Type" value="Other" required> Other</label>
-        </div>
-      </div>
-
-      <div class="field">
-        <label class="field-label" for="ein">EIN (Tax ID) <span class="req">*</span></label>
-        <input type="text" id="ein" name="EIN (Tax ID)" inputmode="numeric" maxlength="10" pattern="\d{2}-\d{7}" required>
-        <p class="helper-text">Your 9-digit federal Tax ID number.</p>
-        <div class="checkbox-row" style="margin-top:10px;">
-          <input type="checkbox" id="noEin">
-          <label for="noEin">I'm a sole proprietor and don't have an EIN.</label>
-        </div>
+        <p class="helper-text">Your business's full legal name, including LLC, Inc., etc. if applicable.</p>
       </div>
 
       <div class="field">
         <label class="field-label" for="businessAddress">Business address <span class="req">*</span></label>
         <input type="text" id="businessAddress" name="Business Address" required>
-        <p class="helper-text">The address registered with the IRS. No PO boxes.</p>
+        <p class="helper-text">No PO boxes.</p>
       </div>
     </section>
 
@@ -627,26 +605,6 @@
       });
     });
 
-    // EIN auto-format as XX-XXXXXXX
-    var einInput = document.getElementById('ein');
-    einInput.addEventListener('input', function(){
-      var digits = this.value.replace(/\D/g, '').slice(0, 9);
-      this.value = digits.length > 2 ? (digits.slice(0, 2) + '-' + digits.slice(2)) : digits;
-    });
-
-    // Sole proprietor, no EIN
-    var noEinCheckbox = document.getElementById('noEin');
-    noEinCheckbox.addEventListener('change', function(){
-      if (this.checked) {
-        einInput.required = false;
-        einInput.disabled = true;
-        einInput.value = '';
-      } else {
-        einInput.required = true;
-        einInput.disabled = false;
-      }
-    });
-
     // Service area: max 14 non-empty lines
     var otherCitiesInput = document.getElementById('otherCities');
     var otherCitiesError = document.getElementById('otherCitiesError');
@@ -694,8 +652,8 @@
     var ownDomainYes = document.querySelector('.domain-radio[value="Yes"]');
     var domainNameInput = document.getElementById('domainName');
 
-    // Builds the submission payload in a fixed field order (Business Registration
-    // first, for A2P review) regardless of the on-page visual section order.
+    // Builds the submission payload in a fixed field order (business details
+    // first) regardless of the on-page visual section order.
     function buildOrderedFormData(){
       var fd = new FormData();
 
@@ -705,8 +663,6 @@
 
       // Business Registration
       fd.append('Legal Business Name', document.getElementById('legalBusinessName').value);
-      fd.append('Business Type', getRadioValue('Business Type'));
-      fd.append('EIN (Tax ID)', noEinCheckbox.checked ? 'NO EIN — sole proprietor A2P' : einInput.value);
       fd.append('Business Address', document.getElementById('businessAddress').value);
 
       // Contact
